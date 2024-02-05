@@ -1,0 +1,55 @@
+version: "3"
+services:
+  postgres14:
+    extends:
+      file: docker-compose.yml
+      service: postgres14
+    image: postgres:14
+    build: none
+    environment:
+      # Add extra env var, as not set in Dockerfile
+      - PGDATA=/odk/postgresql/14/data
+  mail:
+    extends:
+      file: docker-compose.yml
+      service: mail
+  service:
+    extends:
+      file: docker-compose.yml
+      service: service
+    environment:
+      - WORKER_COUNT=${WORKER_COUNT}
+    volumes:
+      # Extra bind mount for local development
+      - ./server/lib:/usr/odk/lib
+    command: [ "./wait-for-it.sh", "postgres14:5432", "--", "./start-odk.sh", "--watch" ]
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+        reservations:
+          cpus: '0.25'
+          memory: 50M
+  nginx:
+    extends:
+      file: docker-compose.yml
+      service: nginx
+  pyxform:
+    extends:
+      file: docker-compose.yml
+      service: pyxform
+  secrets:
+    extends:
+      file: docker-compose.yml
+      service: secrets
+  enketo:
+    # Mock enketo service, required due to depends_on
+    image: jonasal/nginx-certbot:2.4.1
+    volumes:
+      - ./files/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    entrypoint: nginx
+    command: ["-g", "daemon off;"]
+volumes:
+  secrets:
+  postgres14:
