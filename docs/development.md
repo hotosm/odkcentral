@@ -68,11 +68,17 @@ This guide if for users who wish to run ODK Central entirely within _containers_
 docker compose -f docker-compose.dev.yml build
 ```
 
-### 
+### Run the containers
+
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
+
+Access the backend via [http://localhost:880](http://localhost:880)
 
 > Note: the ODK Central frontend is also available to aid debugging:
 >
-> http://localhost:PORT
+> http://localhost:880
 
 ## Local Machine
 
