@@ -39,6 +39,5 @@ else
 fi
 echo "using $WORKER_COUNT worker(s) based on available memory ($MEMTOT).."
 
-echo "starting server."
-exec npx pm2-runtime ./pm2.config.js
-
+echo "starting server with command: pm2-runtime ./pm2.config.js $@"
+pm2-runtime ./pm2.config.js "$@"
